@@ -32,7 +32,7 @@ func (c *BaseController) Route() *chi.Mux {
 func (c *BaseController) shortUrl(w http.ResponseWriter, r *http.Request) {
 	url := chi.URLParam(r, "url")
 
-	response := ShortUrlResponse{Url: url}
+	response := ShortUrlResponse{Url: url + "_short"}
 
 	jsonResponse, err := json.Marshal(response)
 

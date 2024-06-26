@@ -24,18 +24,23 @@ func NewBaseController() *BaseController {
 func (c *BaseController) Route() *chi.Mux {
 	r := chi.NewRouter()
 
-	r.HandleFunc("/{url}", c.shortUrl)
+	r.Post("/short", c.shortUrl)
 
 	return r
 }
 
 func (c *BaseController) shortUrl(w http.ResponseWriter, r *http.Request) {
-	url := chi.URLParam(r, "url")
+	decoder := json.NewDecoder(r.Body)
+	var request ShortUrlRequest
+	err := decoder.Decode(&request)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 
-	response := ShortUrlResponse{Url: url + "_short"}
+	shortUrl := request.Url + "_short"
 
+	response := ShortUrlResponse{Url: shortUrl}
 	jsonResponse, err := json.Marshal(response)
-
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
